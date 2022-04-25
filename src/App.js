@@ -1,79 +1,82 @@
 import "./App.css";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 
 function App() {
-  const [digit, setDigit] = useState('');
-  const [digit2, setDigit2]= useState('');
+  const [digit, setDigit] = useState("");
+  const [digit2, setDigit2] = useState("0");
+
   const [input, setInput] = useState(false);
   const [click, setClick] = useState(false);
+
   const [operator, setOperator] = useState("");
 
-  const [array, setArray] = useState({
-    first:"",
-    operator:"",
-    second:"",
-  });
+  const [array, setArray] = useState([]);
+  function handleArray() {
+    setArray([...array, digit]);
+    console.log("array");
+  }
 
   const handlesClick = (e) => {
-    setInput(true);
-   
-    if (click===true) {
-      setDigit2(digit2.concat(e.target.getAttribute("name")))
+    if (digit2 !== 0 && click && !input) {
+      setDigit2("0");
+      setArray([]);
+      setDigit(e.target.getAttribute("name"));
+    } else if (digit2 !== 0 && click && input) {
+      setDigit(digit.concat(e.target.getAttribute("name")));
+    } else {
+      setDigit(digit.concat(e.target.getAttribute("name")));
     }
-    else {
- setDigit(digit.concat(e.target.getAttribute("name")))
-    }
-   
   };
-  const handleClick = (e) => {
-    setOperator(e.target.getAttribute("name"));
-     setClick(true);
-    //  if (digit=!"" && digit2!="") {
-    //          try {
-    //  setDigit(eval(digit+operator+digit2)).join('');
-    // } catch (err) {
-    //   setDigit("Error")
-    // }
-    //  }
 
-  }
-  const Calculator= ()=> {
-      try {
-        //const operation = Object.values(state).join('');
-setDigit(eval(digit)).toString();
-    } catch (err) {
-      setDigit("Error")
+  const handleClick = (e) => {
+    if (click) {
+      setInput(true);
+      setDigit(array[array.length - 1] + e.target.getAttribute("name"));
+    } else {
+      setOperator(e.target.getAttribute("name"));
+      setDigit(digit.concat(e.target.getAttribute("name")));
     }
-  }
+  };
+  const Calculator = (e) => {
+    try {
+      setDigit2(eval(digit));
+    } catch (err) {
+      setDigit("Error");
+    }
+    setOperator("");
+    setClick(true);
+    setArray([...array, eval(digit)]);
+    console.log(array);
+  };
   const C = () => {
     setInput(false);
     setDigit("");
+    setDigit2("0");
     setOperator("");
-    setDigit2("");
-    // setDigit(digit.slice(0, -1));
+    setClick(false);
+    setArray([]);
   };
-  const add = () => {};
-  const divide = () => {
-    setClick(true);
-  };
+
   const handleChange = (e) => {
     e.preventDefault();
   };
-// og(eval(digit+ '+' +digit2));
-// console.l
- 
-  let initial = JSON.parse(localStorage.getItem("digit"))
+
   return (
     <div className="container">
       <div className="box">
-        <form className="form">
+        <form className="form" onChange={handleArray}>
           <input
             type="text"
             className="entry"
-            value={click? digit2:(input ? digit : "0")}
+            value={digit}
             onChange={handleChange}
-          ></input>
+          />
+          <input
+            type="text"
+            className="entre"
+            value={digit2}
+            onChange={handleChange}
+          />
         </form>
         <div className="one">
           <p name="" onClick={C}>
@@ -82,17 +85,16 @@ setDigit(eval(digit)).toString();
           <p name="" onClick={handlesClick}>
             +/-
           </p>
-          <p id="seen" value="%" name="" onClick={handlesClick}>
+          <p id="seen" value="%" name="%" onClick={handleClick}>
             %
           </p>
           <h3
             className="try"
             style={{
-              backgroundColor:
-                operator === "divide" ? "white" : "rgb(216, 99, 21)",
-              color: operator === "divide" ? "rgb(216, 99, 21)" : "white",
+              backgroundColor: operator === "/" ? "white" : "rgb(216, 99, 21)",
+              color: operator === "/" ? "rgb(216, 99, 21)" : "white",
             }}
-            name="divide"
+            name="/"
             onClick={handleClick}
             value="/"
           >
@@ -100,7 +102,7 @@ setDigit(eval(digit)).toString();
           </h3>
         </div>
         <div className="two">
-          <p name="7" className="fish" onClick={handlesClick} >
+          <p name="7" className="fish" onClick={handlesClick}>
             7
           </p>
           <p name="8" className="fish" onClick={handlesClick}>
@@ -112,12 +114,11 @@ setDigit(eval(digit)).toString();
           <h3
             className="try"
             style={{
-              backgroundColor:
-                operator === "times" ? "white" : "rgb(216, 99, 21)",
-              color: operator === "times" ? "rgb(216, 99, 21)" : "white",
+              backgroundColor: operator === "*" ? "white" : "rgb(216, 99, 21)",
+              color: operator === "*" ? "rgb(216, 99, 21)" : "white",
             }}
             onClick={handleClick}
-            name="times"
+            name="*"
             value="*"
           >
             ×
@@ -136,12 +137,11 @@ setDigit(eval(digit)).toString();
           <h3
             className="try"
             style={{
-              backgroundColor:
-                operator === "sub" ? "white" : "rgb(216, 99, 21)",
-              color: operator === "sub" ? "rgb(216, 99, 21)" : "white",
+              backgroundColor: operator === "-" ? "white" : "rgb(216, 99, 21)",
+              color: operator === "-" ? "rgb(216, 99, 21)" : "white",
             }}
             onClick={handleClick}
-            name="sub"
+            name="-"
             value="-"
           >
             -
@@ -160,12 +160,11 @@ setDigit(eval(digit)).toString();
           <h3
             className="try"
             style={{
-              backgroundColor:
-                operator === "add" ? "white" : "rgb(216, 99, 21)",
-              color: operator === "add" ? "rgb(216, 99, 21)" : "white",
+              backgroundColor: operator === "+" ? "white" : "rgb(216, 99, 21)",
+              color: operator === "+" ? "rgb(216, 99, 21)" : "white",
             }}
             onClick={handleClick}
-            name="add"
+            name="+"
             value="+"
           >
             +
@@ -178,7 +177,7 @@ setDigit(eval(digit)).toString();
           <p name="." onClick={handlesClick}>
             .
           </p>
-          <h3 className="try" onClick={handleClick}>
+          <h3 className="try" onClick={Calculator}>
             =
           </h3>
         </div>
